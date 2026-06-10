@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Portal — Nankana Home Care</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/style.css">
+  </head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       LOGIN SCREEN
+       Rendered until a valid Supabase session exists.
+  ══════════════════════════════════════════ -->
+  <div id="login-screen">
+    <div class="login-card">
+
+      <!-- Brand -->
+      <div class="login-logo">
+        <div class="login-logo-icon">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/>
+            <path d="M12 8v8M8 12h8"/>
+          </svg>
+        </div>
+        <div class="login-logo-text">Nankana <em>Home Care</em></div>
+      </div>
+
+      <div class="login-portal-tag">Administrative Portal</div>
+
+      <h2>Sign in</h2>
+      <p>Restricted access. Authorised personnel only.</p>
+
+      <!-- Error banner -->
+      <div class="error-msg" id="loginError"></div>
+
+      <!-- Email -->
+      <div class="field">
+        <label for="loginEmail">Email Address</label>
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="admin@example.com"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="••••••••••"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+
+      <!-- Submit -->
+      <button class="btn btn-primary btn-full" id="loginBtn" onclick="handleLogin()">
+        <span class="spinner"></span>
+        <span class="btn-label">Sign In</span>
+      </button>
+
+      <div class="login-footer">
+        Forgot your password? Contact your Supabase project owner<br/>
+        to reset credentials via the Authentication dashboard.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       APP SHELL
+       Hidden until auth confirmed.
+  ══════════════════════════════════════════ -->
+  <div id="app-shell">
+
+    <!-- ── Sidebar ─────────────────────────────── -->
+    <aside class="sidebar">
+
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+              <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/>
+              <path d="M12 8v8M8 12h8"/>
+            </svg>
+          </div>
+          <div class="sidebar-logo-text">Nankana <em>Home Care</em></div>
+        </div>
+        <div class="sidebar-portal-label">Admin Portal</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-item active" id="nav-team">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Medical Team
+        </div>
+        <div class="nav-item" id="nav-onboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <line x1="19" y1="8" x2="19" y2="14"/>
+            <line x1="22" y1="11" x2="16" y2="11"/>
+          </svg>
+          Onboard Staff
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" id="adminAvatar">A</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-email truncate" id="adminEmail">—</div>
+            <div class="sidebar-user-role">Administrator</div>
+          </div>
+          <button class="logout-btn" onclick="handleLogout()" title="Sign out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Main content ─────────────────────────── -->
+    <main class="main-content">
+
+      <!-- ═══ TEAM DIRECTORY PANEL ═══ -->
+      <section id="panel-team">
+
+        <div class="page-header">
+          <div class="page-header-eyebrow">Staff Management</div>
+          <h1>Active Medical Team</h1>
+          <p>Registered medical assistants. Send a magic link to any member to restore their app session instantly.</p>
+        </div>
+
+        <div class="card mb0">
+          <div class="card-header">
+            <div class="card-header-left">
+              <h2>Staff Directory</h2>
+              <p>Sourced live from Supabase Auth · <span id="staffCount">—</span> registered accounts</p>
+            </div>
+            <div class="card-icon icon-navy">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="staff-table-wrap">
+            <table class="staff-table">
+              <thead>
+                <tr>
+                  <th>Staff Member</th>
+                  <th>Session Status</th>
+                  <th>Account Created</th>
+                  <th>Last Seen</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="staffTableBody">
+                <!-- Skeleton rows rendered by JS on load -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ═══ ONBOARDING PANEL ═══ -->
+      <section id="panel-onboard" style="display:none">
+
+        <div class="page-header">
+          <div class="page-header-eyebrow">Staff Onboarding</div>
+          <h1>Invite a New Team Member</h1>
+          <p>Send an official invitation to create their MediAssist Pro account.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-left">
+              <h2>Send Onboarding Invite</h2>
+              <p>The staff member will receive an email with their secure account creation link.</p>
+            </div>
+            <div class="card-icon icon-teal">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="invite-row">
+            <div class="field">
+              <label for="inviteEmail">Staff Member's Email Address</label>
+              <input
+                id="inviteEmail"
+                type="email"
+                placeholder="e.g. ali.hassan@gmail.com"
+                autocomplete="off"
+              />
+            </div>
+            <button class="btn btn-teal" id="inviteBtn" onclick="handleInvite()">
+              <span class="spinner" style="border-color:rgba(10,25,47,.3);border-top-color:var(--navy)"></span>
+              <span class="btn-label">Send Onboarding Invite</span>
+            </button>
+          </div>
+
+          <hr class="divider"/>
+
+          <div>
+            <p class="tsm ts fw6" style="margin-bottom:8px">How this works</p>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+              <li class="tsm ts flex ic g8">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                An invite email is sent via your Supabase project's SMTP configuration.
+              </li>
+              <li class="tsm ts flex ic g8">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                The staff member clicks the link, sets their password, and is immediately added to the Auth directory.
+              </li>
+              <li class="tsm ts flex ic g8">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Once registered, they appear in the Staff Directory above where you can manage their access.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Revoke access guidance card -->
+        <div class="card" style="border-color:#fecaca;background:#fff5f5">
+          <div class="flex ic jb g8">
+            <div>
+              <p class="fw6" style="color:var(--danger);margin-bottom:3px">Revoking Access</p>
+              <p class="tsm ts">
+                To immediately disable a staff member's access, go to
+                <strong>Supabase Dashboard → Authentication → Users</strong>, find their account, and click
+                <strong>Ban User</strong>. Their session will be invalidated on next request.
+              </p>
+            </div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="1.8" stroke-linecap="round" style="flex-shrink:0">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <!-- Admin JS (ES module) -->
+  <script type="module" src="js/admin.js"></script>
+
+</body>
+</html>

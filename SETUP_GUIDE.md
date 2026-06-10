@@ -67,11 +67,11 @@ supabase link --project-ref YOUR_PROJECT_ID
 ### 3c. Set the required secrets
 ```bash
 # Your worker app URL (where magic links redirect staff members)
-supabase secrets set WORKER_APP_URL=https://ellifedash.github.io/mediassist-pro/
+supabase secrets set WORKER_APP_URL=ellifedash.github.io/med_pwa_app/
 
 # Your deployed admin portal URL (for CORS — use * during local dev)
 supabase secrets set ADMIN_PORTAL_ORIGIN=https://your-admin-portal.netlify.app
-
+# Supabase Token: sbp_fed73f6be0d33fc163d7edbf42e1d16c0dce3eee
 # These two are set automatically by Supabase — no action needed:
 # SUPABASE_URL
 # SUPABASE_SERVICE_ROLE_KEY

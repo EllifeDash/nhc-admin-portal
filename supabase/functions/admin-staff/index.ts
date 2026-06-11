@@ -3,9 +3,10 @@
 //
 // Supabase Edge Function — Admin Staff Management
 //
-// Handles two actions dispatched from the Admin Portal frontend:
+// Handles three actions dispatched from the Admin Portal frontend:
 //   • action: 'invite' → supabase.auth.admin.inviteUserByEmail()
 //   • action: 'list'   → supabase.auth.admin.listUsers()
+//   • action: 'delete' → supabase.auth.admin.deleteUser()
 //
 // SECURITY: Runs with the SERVICE_ROLE key (stored as a Supabase
 // secret). The key is NEVER sent to the browser. The function
@@ -73,14 +74,14 @@ Deno.serve(async (req: Request) => {
   );
 
   // ── Step 3: Parse body ───────────────────────────────────────
-  let body: { action?: string; email?: string };
+  let body: { action?: string; email?: string; userId?: string };
   try {
     body = await req.json();
   } catch {
     return json({ error: 'Request body must be valid JSON.' }, 400);
   }
 
-  const { action, email } = body;
+  const { action, email, userId } = body;
 
   // ════════════════════════════════════════════════════════════
   // ACTION: 'invite'
@@ -100,6 +101,18 @@ Deno.serve(async (req: Request) => {
 
     if (error) return json({ error: error.message }, 400);
     return json({ success: true, userId: data.user?.id });
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // ACTION: 'delete'
+  // Permanently removes a user from Supabase Auth.
+  // ════════════════════════════════════════════════════════════
+  if (action === 'delete') {
+    if (!userId) return json({ error: 'Field "userId" is required.' }, 400);
+
+    const { error } = await admin.auth.admin.deleteUser(userId);
+    if (error) return json({ error: error.message }, 400);
+    return json({ success: true });
   }
 
   // ════════════════════════════════════════════════════════════

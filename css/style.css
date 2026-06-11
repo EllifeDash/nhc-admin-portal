@@ -231,6 +231,16 @@
       background: var(--bd);
       color: var(--tx);
     }
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(239,68,68,.28);
+    }
+    .btn-danger:not(:disabled):hover {
+      background: #dc2626;
+      box-shadow: 0 4px 20px rgba(239,68,68,.35);
+      transform: translateY(-1px);
+    }
     .btn-danger-ghost {
       background: #fff5f5;
       color: var(--danger);

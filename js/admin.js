@@ -7,9 +7,11 @@
 //   3. Staff onboarding invite       → Supabase Admin Edge Function POST
 //   4. Staff directory               → supabase.auth.admin.listUsers()
 //                                      via a secure Edge Function proxy
-//   5. Magic link dispatch           → supabase.auth.signInWithOtp()
+//   5. Delete user                   → supabase.auth.admin.deleteUser()
+//                                      via a secure Edge Function proxy
+//   6. Magic link dispatch           → supabase.auth.signInWithOtp()
 //      (redirects to mediassist-pro worker app)
-//   6. Sign-out
+//   7. Sign-out
 //
 // Architecture note: this file is COMPLETELY isolated from both
 //   nankana-home-care/js/  and  mediassist-pro/js/
@@ -30,12 +32,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const WORKER_APP_URL    = 'https://ellifedash.github.io/med_pwa_app/';
 
 // Edge Function URL — deployed in your Supabase project.
-// See SETUP_GUIDE.md for the full Edge Function source code.
-// Replace with your actual function URL after deployment:
 const EDGE_FN_BASE = `${SUPABASE_URL}/functions/v1/admin-staff`;
-
-// The MediAssist Pro worker app URL — magic links redirect here.
-const WORKER_APP_URL = 'https://ellifedash.github.io/med_pwa_app/';
 // ────────────────────────────────────────────────────────────────
 
 
@@ -349,6 +346,20 @@ function renderStaffTable(users) {
             <span class="btn-label">✉️ Send Magic Link</span>
             <span class="spinner" style="border-color:rgba(10,25,47,.3);border-top-color:var(--navy)"></span>
           </button>
+          <button
+            class="btn btn-danger btn-sm"
+            id="del-btn-${u.id}"
+            onclick="handleDeleteUser('${u.id}', '${u.email}')"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              <line x1="10" y1="11" x2="10" y2="17"/>
+              <line x1="14" y1="11" x2="14" y2="17"/>
+            </svg>
+            <span class="btn-label">Delete</span>
+            <span class="spinner" style="border-color:rgba(239,68,68,.3);border-top-color:var(--danger)"></span>
+          </button>
         </div>
       </td>
     </tr>`;
@@ -357,7 +368,48 @@ function renderStaffTable(users) {
 
 
 // ════════════════════════════════════════════════════════════════
-// 5. MAGIC LINK — send passwordless login to a staff member
+// 6. DELETE USER — remove a staff member from Supabase Auth
+//
+// Calls the `admin-staff` Edge Function (action: 'delete').
+// The Edge Function runs with the SERVICE_ROLE key to call
+// supabase.auth.admin.deleteUser() server-side.
+// ════════════════════════════════════════════════════════════════
+
+window.handleDeleteUser = async function (userId, email) {
+  if (!confirm(`Permanently delete "${email}"? This cannot be undone.`)) return;
+
+  const btn = document.getElementById(`del-btn-${userId}`);
+  if (btn) setLoading(btn, true);
+
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    const token = session?.access_token;
+
+    const res = await fetch(EDGE_FN_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action: 'delete', userId }),
+    });
+
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error ?? `Server error ${res.status}`);
+
+    toast(`Deleted ${email}`, 'success');
+    loadStaffDirectory();
+
+  } catch (err) {
+    console.error('[admin] delete error:', err);
+    toast(err.message || 'Failed to delete user.', 'danger');
+  } finally {
+    if (btn) setLoading(btn, false);
+  }
+};
+
+// ════════════════════════════════════════════════════════════════
+// 7. MAGIC LINK — send passwordless login to a staff member
 //
 // Uses supabase.auth.signInWithOtp() with the staff member's email.
 // Supabase sends them a login link that redirects to the
@@ -400,7 +452,7 @@ window.sendMagicLink = async function (email, userId) {
 
 
 // ════════════════════════════════════════════════════════════════
-// 6. SIGN OUT  -end
+// 8. SIGN OUT  -end
 // ════════════════════════════════════════════════════════════════
 
 window.handleLogout = async function () {

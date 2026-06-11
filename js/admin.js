@@ -27,9 +27,9 @@ import { createClient } from
 // Supabase Dashboard → Project Settings → API
 // Use the anon/public key here; sensitive admin ops go through
 // Edge Functions that run with the service_role key server-side.
-const SUPABASE_URL      = 'https://gkfotrghyydydbfoakaq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrZm90cmdoeXlkeWRiZm9ha2FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNzk4MzEsImV4cCI6MjA5Mjg1NTgzMX0.sXZRa4tO8AkUQ-Sn34rqjatlLCXbt7dRrdi9qcq1-Lc';
-const WORKER_APP_URL    = 'https://ellifedash.github.io/med_pwa_app/';
+const SUPABASE_URL      = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const WORKER_APP_URL    = 'YOUR_WORKER_APP_URL';
 
 // Edge Function URL — deployed in your Supabase project.
 const EDGE_FN_BASE = `${SUPABASE_URL}/functions/v1/admin-staff`;

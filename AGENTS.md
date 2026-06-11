@@ -1,4 +1,6 @@
-# AGENTS.md — Nankana Admin Portal
+# NHC Admin Portal — AGENTS.md
+
+**Tier 3** of the Nankana Home Care three-tier ecosystem. Admin dashboard for staff onboarding and magic-link dispatch.
 
 ## Stack
 
@@ -13,23 +15,19 @@ Vanilla JS (ES module, no framework) · HTML5 · CSS custom properties · Supaba
 | Link Supabase project | `supabase link --project-ref YOUR_PROJECT_ID` |
 | Set secrets | `supabase secrets set WORKER_APP_URL=... ADMIN_PORTAL_ORIGIN=...` |
 
-There are no lint, test, typecheck, or dev server commands.
-
 ## Key architecture
 
 - Single page: `index.html` → login screen ↔ app shell (two panels: Staff Directory + Onboarding)
-- All UI + auth logic: `js/admin.js` — Supabase JS client imported from CDN (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm`)
-- Edge Function: `supabase/functions/admin-staff/index.ts` (Deno/TypeScript, two actions: `invite` and `list`)
-- DB schema: `setup.sql` — run once in Supabase SQL Editor (creates `appointments`, `admin_audit_log` tables + RLS)
-- Detailed setup: `SETUP_GUIDE.md`
+- All UI + auth logic: `js/admin.js` — Supabase JS client imported from CDN
+- Edge Function: `supabase/functions/admin-staff/index.ts` (Deno/TypeScript, three actions: `invite`, `list`, `delete`)
 
 ## Must-know constraints
 
 1. **`service_role` key must never touch the browser.** All admin auth operations go through the Edge Function, which uses the `service_role` key server-side. The frontend only has the anon key.
-2. **`--no-verify-jwt` is intentional.** The Edge Function verifies the JWT manually inside the handler (for cleaner error messages). Never remove this flag.
-3. **Three placeholders to replace before deployment** in `js/admin.js:27-36`: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `WORKER_APP_URL`.
-4. **Magic links use `shouldCreateUser: false`** (`admin.js:383`) — only works for existing accounts, prevents accidental sign-up.
-5. **Isolated repo.** This portal is separate from `nankana-home-care` and `mediassist-pro`. Never import admin files into those repos.
+2. **`--no-verify-jwt` is intentional.** The Edge Function verifies the JWT manually inside the handler. Never remove this flag.
+3. **Three placeholders to replace before deployment** in `js/admin.js`: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `WORKER_APP_URL`.
+4. **Magic links use `shouldCreateUser: false`** — only works for existing accounts.
+5. **Part of 3-tier ecosystem.** Tier 1: public brochure, Tier 2: MediAssist Pro PWA, Tier 3: this admin portal.
 
 ## Deploy
 

@@ -72,6 +72,9 @@ supabase secrets set WORKER_APP_URL=ellifedash.github.io/med_pwa_app/
 # Your deployed admin portal URL (for CORS — use * during local dev)
 supabase secrets set ADMIN_PORTAL_ORIGIN=https://your-admin-portal.netlify.app
 # Supabase Token: sbp_fed73f6be0d33fc163d7edbf42e1d16c0dce3eee
+
+# Service role secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrZm90cmdoeXlkeWRiZm9ha2FxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzI3OTgzMSwiZXhwIjoyMDkyODU1ODMxfQ.qk8uQ0dFz5lSgw683YdvQEjxHJ1KLF1x6DnSAkqaNS8
+
 # These two are set automatically by Supabase — no action needed:
 # SUPABASE_URL
 # SUPABASE_SERVICE_ROLE_KEY

@@ -400,7 +400,7 @@ window.sendMagicLink = async function (email, userId) {
 
 
 // ════════════════════════════════════════════════════════════════
-// 6. SIGN OUT
+// 6. SIGN OUT  -end
 // ════════════════════════════════════════════════════════════════
 
 window.handleLogout = async function () {

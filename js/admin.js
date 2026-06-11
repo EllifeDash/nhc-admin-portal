@@ -33,9 +33,6 @@ const WORKER_APP_URL    = 'https://ellifedash.github.io/med_pwa_app/';
 // See SETUP_GUIDE.md for the full Edge Function source code.
 // Replace with your actual function URL after deployment:
 const EDGE_FN_BASE = `${SUPABASE_URL}/functions/v1/admin-staff`;
-
-// The MediAssist Pro worker app URL — magic links redirect here.
-const WORKER_APP_URL = 'https://ellifedash.github.io/med_pwa_app/';
 // ────────────────────────────────────────────────────────────────
 
 

@@ -431,7 +431,7 @@ window.sendMagicLink = async function (email, userId) {
       options: {
         // Deep-links the staff member directly into MediAssist Pro
         // after they click the magic link in their email.
-        redirectTo: WORKER_APP_URL,
+        emailRedirectTo: WORKER_APP_URL,
         // Do NOT create a new user if one doesn't exist.
         // We only want to refresh sessions for existing accounts.
         shouldCreateUser: false,
